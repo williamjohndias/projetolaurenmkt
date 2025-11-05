@@ -252,13 +252,6 @@ export default function Home() {
                     +{(equipe.fechamentos || 0) * 5} pts
                   </div>
                 </div>
-
-                <div className={styles.metric}>
-                  <div className={styles.metricLabel}>Taxa de Conversão</div>
-                  <div className={styles.metricValue}>
-                    {equipe.taxa_conversao.toFixed(1)}%
-                  </div>
-                </div>
               </div>
 
               <div className={styles.metaSection}>
@@ -311,10 +304,6 @@ export default function Home() {
                             <span className={styles.membroStatValue}>{membro.propostas_adquiridas}</span>
                           </div>
                           <div className={styles.membroStat}>
-                            <span className={styles.membroStatLabel}>Conversão:</span>
-                            <span className={styles.membroStatValue}>{membro.taxa_conversao.toFixed(1)}%</span>
-                          </div>
-                          <div className={styles.membroStat}>
                             <span className={styles.membroStatLabel}>Valor:</span>
                             <span className={styles.membroStatValue}>R$ {membro.valor_vendido.toLocaleString('pt-BR')}</span>
                           </div>
@@ -339,7 +328,6 @@ export default function Home() {
                      <li>+5 pontos por fechamento</li>
                      <li>+30 pontos bônus ao bater 100% da meta do mês</li>
                      <li>+10 pontos bônus por cada micro-meta semanal batida</li>
-                     <li>Em caso de empate: vence a equipe com maior taxa de conversão</li>
             </ul>
           </div>
           <div className={styles.footerSection}>

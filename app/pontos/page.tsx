@@ -224,10 +224,6 @@ export default function PontosPage() {
             </ul>
           </div>
           <div className={styles.footerSection}>
-            <h3>Desempate</h3>
-            <p>Em caso de empate, vence a equipe com maior taxa de conversão</p>
-          </div>
-          <div className={styles.footerSection}>
             <h3>Período</h3>
             <p>05 de Novembro a 20 de Dezembro</p>
           </div>
