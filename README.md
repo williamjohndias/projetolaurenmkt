@@ -1,6 +1,12 @@
 # 🎄 Rumo ao Natal Campeão - Dashboard
 
-Dashboard interativo para a campanha de vendas "Rumo ao Natal Campeão", que monitora o desempenho das equipes Caroline, Ana e Caio.
+Dashboard interativo para a campanha de vendas "Rumo ao Natal Campeão", que monitora o desempenho das equipes durante o período de 06/11 a 20/12.
+
+## 👥 Equipes
+
+- **Time da Diligência** (Ana Carolina) - Cor: Roxo
+- **Ninjas do Fechamento** (Caroline Dandara) - Cor: Verde  
+- **Os Gênios da Comissão** (Caio) - Cor: Vermelho
 
 ## 🚀 Tecnologias
 
