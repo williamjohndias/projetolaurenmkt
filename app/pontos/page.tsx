@@ -71,8 +71,7 @@ export default function PontosPage() {
   const equipesOrdenadas = equipes.length > 0 ? [...equipes].sort((a, b) => {
     const pontosA = calcularPontos(a);
     const pontosB = calcularPontos(b);
-    if (pontosA !== pontosB) return pontosB - pontosA;
-    return b.taxa_conversao - a.taxa_conversao;
+    return pontosB - pontosA;
   }) : [];
 
   if (loading) {
