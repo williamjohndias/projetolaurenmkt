@@ -135,6 +135,27 @@ export async function GET() {
             WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END
       ),
+      propostas_adquiridas_por_equipe AS (
+        SELECT 
+          CASE 
+            WHEN pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') THEN 'Ana Carolina'
+            WHEN pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
+            WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
+          END as equipe,
+          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN pr.id_negocio END) as propostas_adquiridas
+        FROM primeiro_registro pr
+        WHERE (
+          pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
+          pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
+          pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka')
+        )
+        GROUP BY 
+          CASE 
+            WHEN pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') THEN 'Ana Carolina'
+            WHEN pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
+            WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
+          END
+      ),
       vendas_fechadas_por_equipe AS (
         ${temTabelaVendasFechadas ? `
         SELECT 
@@ -143,7 +164,6 @@ export async function GET() {
             WHEN vf.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
             WHEN vf.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END as equipe,
-          COUNT(DISTINCT vf.id_negocio) as propostas_adquiridas,
           COALESCE(SUM(vf.valor), 0) as valor_vendido
         FROM vendas_fechadas vf
         WHERE vf.data_fechamento >= '${dataInicio}'::date
@@ -160,9 +180,9 @@ export async function GET() {
             WHEN vf.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END
         ` : `
-        SELECT 'Ana Carolina' as equipe, 0 as propostas_adquiridas, 0 as valor_vendido
-        UNION ALL SELECT 'Caroline Dandara', 0, 0
-        UNION ALL SELECT 'Caio', 0, 0
+        SELECT 'Ana Carolina' as equipe, 0 as valor_vendido
+        UNION ALL SELECT 'Caroline Dandara', 0
+        UNION ALL SELECT 'Caio', 0
         WHERE false
         `}
       ),
@@ -197,14 +217,15 @@ export async function GET() {
         `}
       )
       SELECT 
-        COALESCE(pa.equipe, COALESCE(vf.equipe, fe.equipe)) as equipe,
+        COALESCE(pa.equipe, COALESCE(ad.equipe, COALESCE(vf.equipe, fe.equipe))) as equipe,
         COALESCE(pa.propostas_apresentadas, 0) as propostas_apresentadas,
-        COALESCE(vf.propostas_adquiridas, 0) as propostas_adquiridas,
+        COALESCE(ad.propostas_adquiridas, 0) as propostas_adquiridas,
         COALESCE(fe.fechamentos, 0) as fechamentos,
         COALESCE(vf.valor_vendido, 0) as valor_vendido
       FROM propostas_apresentadas_por_equipe pa
-      FULL OUTER JOIN vendas_fechadas_por_equipe vf ON pa.equipe = vf.equipe
-      FULL OUTER JOIN fechamentos_por_equipe fe ON COALESCE(pa.equipe, vf.equipe) = fe.equipe
+      FULL OUTER JOIN propostas_adquiridas_por_equipe ad ON pa.equipe = ad.equipe
+      FULL OUTER JOIN vendas_fechadas_por_equipe vf ON COALESCE(pa.equipe, ad.equipe) = vf.equipe
+      FULL OUTER JOIN fechamentos_por_equipe fe ON COALESCE(pa.equipe, COALESCE(ad.equipe, vf.equipe)) = fe.equipe
       ORDER BY equipe;
     `;
     
@@ -236,11 +257,18 @@ export async function GET() {
         WHERE pr.proprietario IN (${proprietariosList})
         GROUP BY pr.proprietario
       ),
+      propostas_adquiridas_por_membro AS (
+        SELECT 
+          pr.proprietario,
+          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN pr.id_negocio END) as propostas_adquiridas
+        FROM primeiro_registro pr
+        WHERE pr.proprietario IN (${proprietariosList})
+        GROUP BY pr.proprietario
+      ),
       vendas_fechadas_por_membro AS (
         ${temTabelaVendasFechadas ? `
         SELECT 
           vf.proprietario,
-          COUNT(DISTINCT vf.id_negocio) as propostas_adquiridas,
           COALESCE(SUM(vf.valor), 0) as valor_vendido
         FROM vendas_fechadas vf
         WHERE vf.data_fechamento >= '${dataInicio}'::date
@@ -248,17 +276,18 @@ export async function GET() {
           AND vf.proprietario IN (${proprietariosList})
         GROUP BY vf.proprietario
         ` : `
-        SELECT NULL::varchar as proprietario, 0::bigint as propostas_adquiridas, 0::numeric as valor_vendido
+        SELECT NULL::varchar as proprietario, 0::numeric as valor_vendido
         WHERE false
         `}
       )
       SELECT 
-        COALESCE(pa.proprietario, vf.proprietario) as proprietario,
+        COALESCE(pa.proprietario, COALESCE(ad.proprietario, vf.proprietario)) as proprietario,
         COALESCE(pa.propostas_apresentadas, 0) as propostas_apresentadas,
-        COALESCE(vf.propostas_adquiridas, 0) as propostas_adquiridas,
+        COALESCE(ad.propostas_adquiridas, 0) as propostas_adquiridas,
         COALESCE(vf.valor_vendido, 0) as valor_vendido
       FROM propostas_apresentadas_por_membro pa
-      FULL OUTER JOIN vendas_fechadas_por_membro vf ON pa.proprietario = vf.proprietario
+      FULL OUTER JOIN propostas_adquiridas_por_membro ad ON pa.proprietario = ad.proprietario
+      FULL OUTER JOIN vendas_fechadas_por_membro vf ON COALESCE(pa.proprietario, ad.proprietario) = vf.proprietario
       ORDER BY proprietario;
     `;
 
