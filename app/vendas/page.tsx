@@ -124,7 +124,7 @@ export default function VendasFechadas() {
           id_negocio: parseInt(formData.id_negocio),
           proprietario: formData.proprietario,
           valor: formData.valor ? parseFloat(formData.valor) : null,
-          data_fechamento: formData.data_fechamento || null
+          data_fechamento: formData.data_fechamento && formData.data_fechamento.trim() !== '' ? formData.data_fechamento : null
         }),
       });
 
@@ -341,7 +341,27 @@ export default function VendasFechadas() {
                       : '-'
                     }
                   </td>
-                  <td>{venda.data_fechamento ? new Date(venda.data_fechamento + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</td>
+                  <td>
+                    {(() => {
+                      if (!venda.data_fechamento) return '-';
+                      try {
+                        const dateStr = String(venda.data_fechamento);
+                        // Se já vem como string no formato YYYY-MM-DD, usar diretamente
+                        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                          const [ano, mes, dia] = dateStr.split('-');
+                          return `${dia}/${mes}/${ano}`;
+                        }
+                        // Se for um objeto Date ou outra string, tentar converter
+                        const date = new Date(dateStr + 'T12:00:00');
+                        if (isNaN(date.getTime())) {
+                          return '-';
+                        }
+                        return date.toLocaleDateString('pt-BR');
+                      } catch {
+                        return '-';
+                      }
+                    })()}
+                  </td>
                   <td>
                     <button
                       onClick={() => handleDelete(venda.id_negocio)}
