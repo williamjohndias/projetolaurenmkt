@@ -249,7 +249,7 @@ export default function Fechamentos() {
                       : '-'
                     }
                   </td>
-                  <td>{new Date(fechamento.data_fechamento).toLocaleDateString('pt-BR')}</td>
+                  <td>{fechamento.data_fechamento ? new Date(fechamento.data_fechamento + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</td>
                   <td>
                     <button
                       onClick={() => handleDelete(fechamento.id)}

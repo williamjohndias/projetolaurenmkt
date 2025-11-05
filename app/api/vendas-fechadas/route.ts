@@ -96,16 +96,27 @@ export async function POST(request: Request) {
     }
     
     // Inserir ou atualizar venda fechada
+    // Usar a data como string diretamente (formato YYYY-MM-DD) para evitar problemas de timezone
+    let parsedDataFechamento = data_fechamento;
+    if (!parsedDataFechamento) {
+      // Se não fornecer data, usar a data atual no timezone local
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      parsedDataFechamento = `${ano}-${mes}-${dia}`;
+    }
+    
     const result = await client.query(`
       INSERT INTO vendas_fechadas (id_negocio, proprietario, valor, data_fechamento)
-      VALUES ($1, $2, $3, COALESCE($4::date, CURRENT_DATE))
+      VALUES ($1, $2, $3, $4::date)
       ON CONFLICT (id_negocio) 
       DO UPDATE SET 
         proprietario = EXCLUDED.proprietario,
         valor = EXCLUDED.valor,
         data_fechamento = EXCLUDED.data_fechamento
       RETURNING *;
-    `, [id_negocio, proprietario, valor || null, data_fechamento || null]);
+    `, [id_negocio, proprietario, valor || null, parsedDataFechamento]);
     
     return NextResponse.json({ 
       success: true, 

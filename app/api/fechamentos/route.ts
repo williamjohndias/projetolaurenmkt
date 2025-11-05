@@ -47,10 +47,19 @@ export async function POST(request: Request) {
     await ensureFechamentosTable(client);
 
     const parsedValor = valor ? parseFloat(valor) : null;
-    const parsedDataFechamento = data_fechamento || new Date().toISOString().split('T')[0];
+    // Usar a data como string diretamente (formato YYYY-MM-DD) para evitar problemas de timezone
+    let parsedDataFechamento = data_fechamento;
+    if (!parsedDataFechamento) {
+      // Se não fornecer data, usar a data atual no timezone local
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      parsedDataFechamento = `${ano}-${mes}-${dia}`;
+    }
 
     const result = await client.query(
-      `INSERT INTO fechamentos (numero, proprietario, valor, data_fechamento) VALUES ($1, $2, $3, $4) ON CONFLICT (numero, proprietario) DO UPDATE SET valor = EXCLUDED.valor, data_fechamento = EXCLUDED.data_fechamento, created_at = CURRENT_TIMESTAMP RETURNING *`,
+      `INSERT INTO fechamentos (numero, proprietario, valor, data_fechamento) VALUES ($1, $2, $3, $4::date) ON CONFLICT (numero, proprietario) DO UPDATE SET valor = EXCLUDED.valor, data_fechamento = EXCLUDED.data_fechamento, created_at = CURRENT_TIMESTAMP RETURNING *`,
       [numero, proprietario, parsedValor, parsedDataFechamento]
     );
     return NextResponse.json({ fechamento: result.rows[0] });

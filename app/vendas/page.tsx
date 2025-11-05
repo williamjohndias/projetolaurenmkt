@@ -341,7 +341,7 @@ export default function VendasFechadas() {
                       : '-'
                     }
                   </td>
-                  <td>{new Date(venda.data_fechamento).toLocaleDateString('pt-BR')}</td>
+                  <td>{venda.data_fechamento ? new Date(venda.data_fechamento + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</td>
                   <td>
                     <button
                       onClick={() => handleDelete(venda.id_negocio)}
