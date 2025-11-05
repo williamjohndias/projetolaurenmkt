@@ -15,11 +15,13 @@ interface EquipeData {
   equipe: string;
   propostas_apresentadas: number;
   propostas_adquiridas: number;
+  fechamentos?: number;
   meta_mes: number;
   meta_atual: number;
   pontos: number;
   taxa_conversao: number;
   meta_percentual: number;
+  micro_metas_batidas?: number;
   membros?: MembroData[];
 }
 
@@ -63,12 +65,16 @@ export default function Home() {
   const calcularPontos = (equipe: EquipeData) => {
     let pontos = 0;
     pontos += equipe.propostas_apresentadas * 1; // +1 por proposta apresentada
-    pontos += equipe.propostas_adquiridas * 5; // +5 por proposta adquirida
+    pontos += equipe.propostas_adquiridas * 1; // +1 por proposta adquirida
+    pontos += (equipe.fechamentos || 0) * 5; // +5 por fechamento
     
-    // +30 pontos se bateu 100% da meta
+    // +30 pontos se bateu 100% da meta do mês
     if (equipe.meta_percentual >= 100) {
       pontos += 30;
     }
+    
+    // +10 pontos por cada micro-meta semanal batida
+    pontos += (equipe.micro_metas_batidas || 0) * 10;
     
     return pontos;
   };
@@ -92,7 +98,7 @@ export default function Home() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.title}>🎄 Rumo ao Natal Campeão 🎄</h1>
-        <p className={styles.subtitle}>Campanha de Vendas • 06/11 a 20/12</p>
+               <p className={styles.subtitle}>Campanha de Vendas • 05/11 a 20/12</p>
                <div className={styles.headerActions}>
                  <button onClick={fetchData} className={styles.refreshBtn}>
                    Atualizar
@@ -102,6 +108,9 @@ export default function Home() {
                  </a>
                  <a href="/vendas" className={styles.vendasBtn}>
                    Gerenciar Vendas Fechadas
+                 </a>
+                 <a href="/fechamentos" className={styles.vendasBtn}>
+                   Gerenciar Fechamentos
                  </a>
                </div>
       </header>
@@ -233,7 +242,17 @@ export default function Home() {
                     {equipe.propostas_adquiridas}
                   </div>
                   <div className={styles.metricPoints}>
-                    +{equipe.propostas_adquiridas * 5} pts
+                    +{equipe.propostas_adquiridas * 1} pts
+                  </div>
+                </div>
+
+                <div className={styles.metric}>
+                  <div className={styles.metricLabel}>Fechamentos</div>
+                  <div className={styles.metricValue}>
+                    {equipe.fechamentos || 0}
+                  </div>
+                  <div className={styles.metricPoints}>
+                    +{(equipe.fechamentos || 0) * 5} pts
                   </div>
                 </div>
 
@@ -262,11 +281,16 @@ export default function Home() {
                   <span>R$ {equipe.meta_atual.toLocaleString('pt-BR')}</span>
                   <span>de R$ {equipe.meta_mes.toLocaleString('pt-BR')}</span>
                 </div>
-                {equipe.meta_percentual >= 100 && (
-                  <div className={styles.bonusBadge}>
-                    +30 pontos bônus (Meta batida!)
-                  </div>
-                )}
+                       {equipe.meta_percentual >= 100 && (
+                         <div className={styles.bonusBadge}>
+                           +30 pontos bônus (Meta do mês batida!)
+                         </div>
+                       )}
+                       {equipe.micro_metas_batidas && equipe.micro_metas_batidas > 0 && (
+                         <div className={styles.bonusBadge}>
+                           +{equipe.micro_metas_batidas * 10} pontos bônus ({equipe.micro_metas_batidas} micro-meta{equipe.micro_metas_batidas > 1 ? 's' : ''} batida{equipe.micro_metas_batidas > 1 ? 's' : ''})
+                         </div>
+                       )}
               </div>
 
               <div className={styles.ranking}>
@@ -313,10 +337,12 @@ export default function Home() {
           <div className={styles.footerSection}>
             <h3>Regras da Gincana</h3>
             <ul>
-              <li>+1 ponto por proposta apresentada</li>
-              <li>+5 pontos por proposta adquirida</li>
-              <li>+30 pontos bônus ao bater 100% da meta</li>
-              <li>Em caso de empate: vence a equipe com maior taxa de conversão</li>
+                     <li>+1 ponto por proposta apresentada</li>
+                     <li>+1 ponto por proposta adquirida</li>
+                     <li>+5 pontos por fechamento</li>
+                     <li>+30 pontos bônus ao bater 100% da meta do mês</li>
+                     <li>+10 pontos bônus por cada micro-meta semanal batida</li>
+                     <li>Em caso de empate: vence a equipe com maior taxa de conversão</li>
             </ul>
           </div>
           <div className={styles.footerSection}>
@@ -324,8 +350,8 @@ export default function Home() {
             <p>Day-off + Experiência de Bem-Estar</p>
           </div>
           <div className={styles.footerSection}>
-            <h3>Período</h3>
-            <p>06 de Novembro a 20 de Dezembro</p>
+                   <h3>Período</h3>
+                   <p>05 de Novembro a 20 de Dezembro</p>
             <p className={styles.footerCopyright}>
               © 2025 Rumo ao Natal Campeão
             </p>

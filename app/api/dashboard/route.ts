@@ -67,9 +67,9 @@ export async function GET() {
     // Buscar dados agregados por equipe (agregando todos os membros)
     console.log('Buscando dados da tabela dashmetas...');
     
-    // Período da campanha: 06/11 a 20/12 (período fixo)
+    // Período da campanha: 05/11 a 20/12 (período fixo)
     const anoAtual = new Date().getFullYear();
-    const dataInicio = `${anoAtual}-11-06`; // 06 de novembro
+    const dataInicio = `${anoAtual}-11-05`; // 05 de novembro
     const dataFim = `${anoAtual}-12-20`;   // 20 de dezembro
     
     console.log(`Filtrando dados do período da campanha: ${dataInicio} até ${dataFim}`);
@@ -80,7 +80,7 @@ export async function GET() {
     // Propostas adquiridas = vendas marcadas manualmente na tabela vendas_fechadas
     const proprietariosList = proprietariosEquipes.map(p => `'${p.replace(/'/g, "''")}'`).join(', ');
     
-    // Verificar se a tabela vendas_fechadas existe
+    // Verificar se as tabelas existem
     const vendasFechadasCheck = await client.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
@@ -88,8 +88,16 @@ export async function GET() {
         AND table_name = 'vendas_fechadas'
       );
     `);
-    
     const temTabelaVendasFechadas = vendasFechadasCheck.rows[0].exists;
+
+    const fechamentosCheck = await client.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'fechamentos'
+      );
+    `);
+    const temTabelaFechamentos = fechamentosCheck.rows[0].exists;
     
     const query = `
       WITH primeiro_registro AS (
@@ -157,14 +165,46 @@ export async function GET() {
         UNION ALL SELECT 'Caio', 0, 0
         WHERE false
         `}
+      ),
+      fechamentos_por_equipe AS (
+        ${temTabelaFechamentos ? `
+        SELECT 
+          CASE 
+            WHEN f.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') THEN 'Ana Carolina'
+            WHEN f.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
+            WHEN f.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
+          END as equipe,
+          COUNT(*) as fechamentos
+        FROM fechamentos f
+        WHERE f.data_fechamento >= '${dataInicio}'::date
+          AND f.data_fechamento <= '${dataFim}'::date
+          AND (
+            f.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
+            f.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
+            f.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka')
+          )
+        GROUP BY 
+          CASE 
+            WHEN f.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') THEN 'Ana Carolina'
+            WHEN f.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
+            WHEN f.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
+          END
+        ` : `
+        SELECT 'Ana Carolina' as equipe, 0 as fechamentos
+        UNION ALL SELECT 'Caroline Dandara', 0
+        UNION ALL SELECT 'Caio', 0
+        WHERE false
+        `}
       )
       SELECT 
-        COALESCE(pa.equipe, vf.equipe) as equipe,
+        COALESCE(pa.equipe, COALESCE(vf.equipe, fe.equipe)) as equipe,
         COALESCE(pa.propostas_apresentadas, 0) as propostas_apresentadas,
         COALESCE(vf.propostas_adquiridas, 0) as propostas_adquiridas,
+        COALESCE(fe.fechamentos, 0) as fechamentos,
         COALESCE(vf.valor_vendido, 0) as valor_vendido
       FROM propostas_apresentadas_por_equipe pa
       FULL OUTER JOIN vendas_fechadas_por_equipe vf ON pa.equipe = vf.equipe
+      FULL OUTER JOIN fechamentos_por_equipe fe ON COALESCE(pa.equipe, vf.equipe) = fe.equipe
       ORDER BY equipe;
     `;
     
@@ -311,6 +351,18 @@ export async function GET() {
       'Caio': 800000            // R$ 800 mil
     };
 
+    // Calcular micro-metas semanais
+    // Micro-meta: meta semanal = (meta_mes / número de semanas da campanha)
+    const dataInicioObj = new Date(dataInicio);
+    const dataFimObj = new Date(dataFim);
+    const hoje = new Date();
+    const dataFimCalculo = hoje < dataFimObj ? hoje : dataFimObj;
+    const diffTime = Math.abs(dataFimCalculo.getTime() - dataInicioObj.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const semanasTotais = Math.ceil((new Date(dataFim).getTime() - new Date(dataInicio).getTime()) / (1000 * 60 * 60 * 24 * 7));
+    const semanasDecorridas = Math.ceil(diffDays / 7);
+    const metaSemanal = 800000 / semanasTotais; // Meta semanal = R$ 800k / número de semanas
+
     const equipes = result.rows.map(row => {
       const equipe = row.equipe;
       
@@ -321,17 +373,31 @@ export async function GET() {
       const propostasAdquiridas = typeof row.propostas_adquiridas === 'string'
         ? parseInt(row.propostas_adquiridas) || 0
         : (row.propostas_adquiridas || 0);
+      const fechamentos = typeof row.fechamentos === 'string'
+        ? parseInt(row.fechamentos) || 0
+        : (row.fechamentos || 0);
       const valorVendido = typeof row.valor_vendido === 'string'
         ? parseFloat(row.valor_vendido) || 0
         : (row.valor_vendido || 0);
       
-      const metaMes = metasPorEquipe[equipe] || 200000000;
-      const metaAtual = valorVendido; // Meta atual = valor vendido (status = 'won')
+      const metaMes = metasPorEquipe[equipe] || 800000;
+      const metaAtual = valorVendido;
       
       // Calcular taxa de conversão
       const taxaConversao = propostasApresentadas > 0 
         ? Math.round((propostasAdquiridas / propostasApresentadas) * 100 * 100) / 100
         : 0;
+      
+      // Calcular micro-metas semanais batidas
+      // Para simplificar, vamos contar quantas semanas a equipe bateu a meta semanal
+      // Isso seria mais preciso com dados semanais, mas vamos usar uma aproximação
+      let microMetasBatidas = 0;
+      if (metaSemanal > 0 && valorVendido > 0) {
+        // Aproximação: quantas metas semanais a equipe já atingiu
+        microMetasBatidas = Math.floor(valorVendido / metaSemanal);
+        // Limitar ao número de semanas decorridas
+        microMetasBatidas = Math.min(microMetasBatidas, semanasDecorridas);
+      }
       
       return {
         equipe: equipe,
@@ -339,6 +405,7 @@ export async function GET() {
         cor_equipe: coresEquipes[equipe] || '#D2AF52',
         propostas_apresentadas: propostasApresentadas,
         propostas_adquiridas: propostasAdquiridas,
+        fechamentos: fechamentos,
         meta_mes: metaMes,
         meta_atual: metaAtual,
         pontos: 0, // Será calculado no frontend
@@ -346,6 +413,7 @@ export async function GET() {
         meta_percentual: metaMes > 0 
           ? Math.round((metaAtual / metaMes) * 100) 
           : 0,
+        micro_metas_batidas: microMetasBatidas,
         membros: membrosPorEquipe[equipe] || []
       };
     });
@@ -361,11 +429,13 @@ export async function GET() {
           cor_equipe: coresEquipes[equipeNome] || '#D2AF52',
           propostas_apresentadas: 0,
           propostas_adquiridas: 0,
+          fechamentos: 0,
           meta_mes: metasPorEquipe[equipeNome] || 800000,
           meta_atual: 0,
           pontos: 0,
           taxa_conversao: 0,
           meta_percentual: 0,
+          micro_metas_batidas: 0,
           membros: membrosPorEquipe[equipeNome] || []
         });
       } else {

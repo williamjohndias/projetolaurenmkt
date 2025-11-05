@@ -10,11 +10,13 @@ interface EquipeData {
   cor_equipe?: string;
   propostas_apresentadas: number;
   propostas_adquiridas: number;
+  fechamentos?: number;
   meta_mes: number;
   meta_atual: number;
   pontos: number;
   taxa_conversao: number;
   meta_percentual: number;
+  micro_metas_batidas?: number;
 }
 
 export default function PontosPage() {
@@ -53,12 +55,15 @@ export default function PontosPage() {
 
   const calcularPontos = (equipe: EquipeData) => {
     let pontos = 0;
-    pontos += equipe.propostas_apresentadas * 1;
-    pontos += equipe.propostas_adquiridas * 5;
+    pontos += equipe.propostas_apresentadas * 1; // +1 por proposta apresentada
+    pontos += equipe.propostas_adquiridas * 1; // +1 por proposta adquirida
+    pontos += (equipe.fechamentos || 0) * 5; // +5 por fechamento
 
     if (equipe.meta_percentual >= 100) {
-      pontos += 30;
+      pontos += 30; // +30 pontos se bateu 100% da meta do mês
     }
+
+    pontos += (equipe.micro_metas_batidas || 0) * 10; // +10 por cada micro-meta batida
 
     return pontos;
   };
@@ -96,7 +101,7 @@ export default function PontosPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.title}>🎄 Ranking de Pontos 🎄</h1>
-        <p className={styles.subtitle}>Campanha Rumo ao Natal Campeão • 06/11 a 20/12</p>
+        <p className={styles.subtitle}>Campanha Rumo ao Natal Campeão • 05/11 a 20/12</p>
         <div className={styles.headerActions}>
           <button onClick={fetchData} className={styles.refreshBtn}>
             Atualizar
@@ -151,14 +156,28 @@ export default function PontosPage() {
                 </div>
                 <div className={styles.pontoItem}>
                   <span className={styles.pontoLabel}>Propostas Adquiridas:</span>
-                  <span className={styles.pontoValue}>{equipe.propostas_adquiridas} × 5 =</span>
-                  <span className={styles.pontoTotal}>{equipe.propostas_adquiridas * 5} pts</span>
+                  <span className={styles.pontoValue}>{equipe.propostas_adquiridas} × 1 =</span>
+                  <span className={styles.pontoTotal}>{equipe.propostas_adquiridas * 1} pts</span>
                 </div>
+                {(equipe.fechamentos || 0) > 0 && (
+                  <div className={styles.pontoItem}>
+                    <span className={styles.pontoLabel}>Fechamentos:</span>
+                    <span className={styles.pontoValue}>{equipe.fechamentos || 0} × 5 =</span>
+                    <span className={styles.pontoTotal}>{(equipe.fechamentos || 0) * 5} pts</span>
+                  </div>
+                )}
                 {equipe.meta_percentual >= 100 && (
                   <div className={styles.pontoItem}>
-                    <span className={styles.pontoLabel}>Bônus Meta (100%):</span>
+                    <span className={styles.pontoLabel}>Bônus Meta do Mês (100%):</span>
                     <span className={styles.pontoValue}>+</span>
                     <span className={styles.pontoTotal}>30 pts</span>
+                  </div>
+                )}
+                {(equipe.micro_metas_batidas || 0) > 0 && (
+                  <div className={styles.pontoItem}>
+                    <span className={styles.pontoLabel}>Micro-Metas Semanais:</span>
+                    <span className={styles.pontoValue}>{equipe.micro_metas_batidas || 0} × 10 =</span>
+                    <span className={styles.pontoTotal}>{(equipe.micro_metas_batidas || 0) * 10} pts</span>
                   </div>
                 )}
                 <div className={styles.pontoSeparator}></div>
@@ -198,8 +217,10 @@ export default function PontosPage() {
             <h3>Sistema de Pontuação</h3>
             <ul>
               <li>+1 ponto por proposta apresentada</li>
-              <li>+5 pontos por proposta adquirida</li>
-              <li>+30 pontos bônus ao bater 100% da meta</li>
+              <li>+1 ponto por proposta adquirida</li>
+              <li>+5 pontos por fechamento</li>
+              <li>+30 pontos bônus ao bater 100% da meta do mês</li>
+              <li>+10 pontos bônus por cada micro-meta semanal batida</li>
             </ul>
           </div>
           <div className={styles.footerSection}>
@@ -208,7 +229,7 @@ export default function PontosPage() {
           </div>
           <div className={styles.footerSection}>
             <h3>Período</h3>
-            <p>06 de Novembro a 20 de Dezembro</p>
+            <p>05 de Novembro a 20 de Dezembro</p>
           </div>
         </div>
       </footer>
