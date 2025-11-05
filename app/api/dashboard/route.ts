@@ -354,9 +354,9 @@ export async function GET() {
 
     // Cores das equipes
     const coresEquipes: { [key: string]: string } = {
-      'Ana Carolina': '#8B5CF6', // Roxo
-      'Caroline Dandara': '#10B981', // Verde
-      'Caio': '#EF4444' // Vermelho
+      'Ana Carolina': '#9D4EDD', // Roxo - Time da Diligência
+      'Caroline Dandara': '#22C55E', // Verde - Ninjas do Fechamento
+      'Caio': '#DC2626' // Vermelho - Os Gênios da Comissão
     };
 
     // Definir metas (R$ 800.000 por equipe)
