@@ -76,8 +76,9 @@ export async function GET() {
     
     // Query que agrega dados por equipe
     // Regra: considerar apenas o primeiro registro de cada id_negocio (ordenado por data)
-    // "Negociações iniciadas" = propostas apresentadas
-    // Propostas adquiridas = vendas marcadas manualmente na tabela vendas_fechadas
+    // "Negociações iniciadas" = propostas apresentadas (do banco dashmetas) → +1 ponto
+    // "Cálculo" = propostas adquiridas (do banco dashmetas) → +1 ponto
+    // Fechamentos = inseridos manualmente na tabela fechamentos → +5 pontos
     const proprietariosList = proprietariosEquipes.map(p => `'${p.replace(/'/g, "''")}'`).join(', ');
     
     // Verificar se as tabelas existem
