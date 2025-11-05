@@ -118,51 +118,51 @@ export default function PontosPage() {
             <div
               key={equipe.equipe}
               className={`${styles.card} ${isPrimeiro ? styles.primeiro : ''}`}
-              style={{ borderColor: corEquipe }}
             >
-              <div className={styles.cardHeader}>
-                <div className={styles.rankingPosition}>
-                  <span className={styles.positionNumber}>#{index + 1}</span>
+              <div className={styles.cardFrame}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.rankBadge}>
+                    <span className={styles.rankNumber}>{index + 1}</span>
+                  </div>
+                  {isPrimeiro && <div className={styles.crown}>👑</div>}
+                  <h2 className={styles.equipeName}>{nomeDisplay}</h2>
                 </div>
-                {isPrimeiro && <div className={styles.leaderBadge}>1ST</div>}
-                <div className={styles.cardContent}>
-                  <h2 className={styles.equipeName} style={{ color: corEquipe }}>
-                    {nomeDisplay.toUpperCase()}
-                  </h2>
-                  <div className={styles.pontosTotal} style={{ color: corEquipe }}>
+                
+                <div className={styles.scoreContainer}>
+                  <div className={styles.scoreLabel}>PONTOS</div>
+                  <div className={styles.scoreValue} style={{ color: corEquipe }}>
                     {pontosCalculados}
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.statsGrid}>
-                <div className={styles.statItem}>
-                  <span className={styles.statLabel}>APRES</span>
-                  <span className={styles.statValue}>{equipe.propostas_apresentadas}</span>
-                  <span className={styles.statPoints}>+{equipe.propostas_apresentadas * 1}</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statLabel}>ADQUI</span>
-                  <span className={styles.statValue}>{equipe.propostas_adquiridas}</span>
-                  <span className={styles.statPoints}>+{equipe.propostas_adquiridas * 1}</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statLabel}>FECH</span>
-                  <span className={styles.statValue}>{equipe.fechamentos || 0}</span>
-                  <span className={styles.statPoints}>+{(equipe.fechamentos || 0) * 5}</span>
-                </div>
-                {equipe.meta_percentual >= 100 && (
-                  <div className={styles.statItem}>
-                    <span className={styles.statLabel}>META</span>
-                    <span className={styles.statValue}>100%</span>
-                    <span className={styles.statPoints}>+30</span>
+                <div className={styles.metricsRow}>
+                  <div className={styles.metricBox}>
+                    <div className={styles.metricIcon}>📊</div>
+                    <div className={styles.metricInfo}>
+                      <div className={styles.metricNumber}>{equipe.propostas_apresentadas}</div>
+                      <div className={styles.metricLabel}>Apresentadas</div>
+                    </div>
                   </div>
-                )}
-                {(equipe.micro_metas_batidas || 0) > 0 && (
-                  <div className={styles.statItem}>
-                    <span className={styles.statLabel}>MICRO</span>
-                    <span className={styles.statValue}>{equipe.micro_metas_batidas || 0}</span>
-                    <span className={styles.statPoints}>+{(equipe.micro_metas_batidas || 0) * 10}</span>
+                  <div className={styles.metricBox}>
+                    <div className={styles.metricIcon}>✅</div>
+                    <div className={styles.metricInfo}>
+                      <div className={styles.metricNumber}>{equipe.propostas_adquiridas}</div>
+                      <div className={styles.metricLabel}>Adquiridas</div>
+                    </div>
+                  </div>
+                  <div className={styles.metricBox}>
+                    <div className={styles.metricIcon}>🎯</div>
+                    <div className={styles.metricInfo}>
+                      <div className={styles.metricNumber}>{equipe.fechamentos || 0}</div>
+                      <div className={styles.metricLabel}>Fechamentos</div>
+                    </div>
+                  </div>
+                </div>
+
+                {equipe.meta_percentual >= 100 && (
+                  <div className={styles.bonusBadge}>
+                    <span className={styles.bonusIcon}>⭐</span>
+                    <span>Meta 100% +30pts</span>
                   </div>
                 )}
               </div>

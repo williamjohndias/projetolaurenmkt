@@ -1,112 +1,127 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=MedievalSharp&display=swap');
 
 .container {
   min-height: 100vh;
   height: 100vh;
-  padding: 1rem;
-  background: #0a0a0a;
-  background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 25%, #1a472a 50%, #0d2818 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  font-family: 'Press Start 2P', monospace;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 195, 74, 0.05) 2px, rgba(139, 195, 74, 0.05) 4px);
+  pointer-events: none;
 }
 
 .header {
   text-align: center;
   margin-bottom: 1rem;
-  color: #00ff00;
+  color: #ffd700;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 400;
-  margin-bottom: 0.5rem;
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #ffd700;
   text-shadow: 
-    3px 3px 0 #000,
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000;
-  letter-spacing: 2px;
-  animation: flicker 3s infinite;
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.9; }
+    4px 4px 0 #8b4513,
+    0 0 10px rgba(255, 215, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  font-size: 0.7rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
   margin-bottom: 0.5rem;
-  color: #ffff00;
+  color: #c9a33e;
   text-shadow: 2px 2px 0 #000;
 }
 
 .headerActions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.8rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 0.5rem;
 }
 
 .refreshBtn,
 .dashboardBtn {
-  padding: 0.5rem 1rem;
-  background: #000;
-  border: 3px solid #00ff00;
-  color: #00ff00;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  border: 3px solid #ffd700;
+  color: #ffd700;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   text-transform: uppercase;
   box-shadow: 
-    4px 4px 0 #000,
-    inset 0 0 0 1px #00ff00;
-  transition: all 0.1s;
+    0 4px 0 #654321,
+    0 0 10px rgba(255, 215, 0, 0.3);
+  transition: all 0.2s;
+  position: relative;
 }
 
 .refreshBtn:hover,
 .dashboardBtn:hover {
-  background: #00ff00;
-  color: #000;
-  transform: translate(2px, 2px);
+  transform: translateY(2px);
   box-shadow: 
-    2px 2px 0 #000,
-    inset 0 0 0 1px #000;
+    0 2px 0 #654321,
+    0 0 15px rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
 }
 
 .refreshBtn:active,
 .dashboardBtn:active {
-  transform: translate(4px, 4px);
-  box-shadow: 0 0 0 #000;
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #654321;
 }
 
 .loading,
 .error {
   text-align: center;
-  padding: 2rem;
-  color: #00ff00;
-  font-size: 0.8rem;
+  padding: 3rem;
+  color: #ffd700;
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
 }
 
 .error {
-  background: #000;
-  border: 3px solid #ff0000;
-  box-shadow: 
-    4px 4px 0 #000,
-    inset 0 0 0 1px #ff0000;
+  background: rgba(139, 0, 0, 0.3);
+  border: 3px solid #ff6b6b;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
 }
 
 .errorHeader {
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
 }
 
@@ -115,214 +130,276 @@
 }
 
 .retryBtn {
-  padding: 0.5rem 1rem;
-  background: #ff0000;
-  border: 3px solid #000;
-  color: #fff;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  background: #8b0000;
+  border: 3px solid #ffd700;
+  color: #ffd700;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
   cursor: pointer;
   text-transform: uppercase;
 }
 
 .retryBtn:hover {
-  background: #000;
-  color: #ff0000;
-  border-color: #ff0000;
+  background: #a52a2a;
 }
 
 .ranking {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.5rem;
   flex: 1;
   overflow: hidden;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 180px);
+  position: relative;
+  z-index: 1;
 }
 
 .card {
-  background: #1a1a1a;
-  border: 4px solid;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(201, 163, 62, 0.05) 100%);
+  border: 4px solid #ffd700;
+  border-radius: 12px;
   padding: 1rem;
   position: relative;
   box-shadow: 
-    6px 6px 0 #000,
-    inset 0 0 0 2px #000;
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    inset 0 0 20px rgba(255, 215, 0, 0.1),
+    0 0 30px rgba(255, 215, 0, 0.2);
   display: flex;
   flex-direction: column;
   min-height: 0;
+  backdrop-filter: blur(5px);
 }
 
 .card.primeiro {
   border-width: 5px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(201, 163, 62, 0.1) 100%);
   box-shadow: 
-    8px 8px 0 #000,
-    inset 0 0 0 3px #000,
-    0 0 20px currentColor;
-  animation: glow 2s ease-in-out infinite alternate;
+    0 10px 20px rgba(0, 0, 0, 0.5),
+    inset 0 0 30px rgba(255, 215, 0, 0.2),
+    0 0 40px rgba(255, 215, 0, 0.4);
+  animation: shimmer 3s ease-in-out infinite;
 }
 
-@keyframes glow {
-  from {
+@keyframes shimmer {
+  0%, 100% {
     box-shadow: 
-      8px 8px 0 #000,
-      inset 0 0 0 3px #000,
-      0 0 20px currentColor;
+      0 10px 20px rgba(0, 0, 0, 0.5),
+      inset 0 0 30px rgba(255, 215, 0, 0.2),
+      0 0 40px rgba(255, 215, 0, 0.4);
   }
-  to {
+  50% {
     box-shadow: 
-      8px 8px 0 #000,
-      inset 0 0 0 3px #000,
-      0 0 30px currentColor,
-      0 0 40px currentColor;
+      0 10px 20px rgba(0, 0, 0, 0.5),
+      inset 0 0 30px rgba(255, 215, 0, 0.3),
+      0 0 60px rgba(255, 215, 0, 0.6);
   }
 }
 
-.leaderBadge {
-  position: absolute;
-  top: -10px;
-  right: 10px;
-  background: #ffff00;
-  color: #000;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.6rem;
-  border: 3px solid #000;
-  box-shadow: 3px 3px 0 #000;
-  z-index: 10;
+.cardFrame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0.8rem;
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  margin-bottom: 1rem;
-  flex-shrink: 0;
+  position: relative;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
 }
 
-.rankingPosition {
+.rankBadge {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  border: 3px solid #ffd700;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  background: #000;
-  border: 3px solid #fff;
   box-shadow: 
-    3px 3px 0 #000,
-    inset 0 0 0 1px #fff;
+    0 4px 0 #654321,
+    inset 0 2px 10px rgba(255, 215, 0, 0.3);
+  flex-shrink: 0;
 }
 
-.positionNumber {
-  font-size: 1.2rem;
-  font-weight: 400;
-  color: #fff;
-}
-
-.cardContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.equipeName {
-  font-size: 0.7rem;
-  font-weight: 400;
-  margin-bottom: 0.3rem;
-  line-height: 1.4;
-  word-break: break-word;
+.rankNumber {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffd700;
   text-shadow: 2px 2px 0 #000;
 }
 
-.pontosTotal {
+.crown {
+  position: absolute;
+  top: -15px;
+  right: 0;
   font-size: 1.5rem;
-  font-weight: 400;
-  text-shadow: 
-    3px 3px 0 #000,
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  animation: float 2s ease-in-out infinite;
 }
 
-.statsGrid {
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.equipeName {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffd700;
+  text-shadow: 
+    2px 2px 0 #000,
+    0 0 10px rgba(255, 215, 0, 0.5);
+  flex: 1;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scoreContainer {
+  text-align: center;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  box-shadow: 
+    inset 0 2px 10px rgba(0, 0, 0, 0.5),
+    0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.scoreLabel {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  color: #c9a33e;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.3rem;
+}
+
+.scoreValue {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 
+    3px 3px 0 #000,
+    0 0 20px currentColor;
+  color: #ffd700;
+}
+
+.metricsRow {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   flex: 1;
   min-height: 0;
 }
 
-.statItem {
-  background: #000;
-  border: 2px solid #fff;
-  padding: 0.5rem;
+.metricBox {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  border-radius: 6px;
+  padding: 0.6rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 
-    3px 3px 0 #000,
-    inset 0 0 0 1px #fff;
+  gap: 0.3rem;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-.statLabel {
-  font-size: 0.5rem;
-  color: #888;
-  margin-bottom: 0.3rem;
-  text-transform: uppercase;
+.metricIcon {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
-.statValue {
-  font-size: 1rem;
-  color: #fff;
-  margin-bottom: 0.2rem;
+.metricInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.metricNumber {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffd700;
   text-shadow: 2px 2px 0 #000;
 }
 
-.statPoints {
+.metricLabel {
+  font-family: 'Cinzel', serif;
   font-size: 0.5rem;
-  color: #00ff00;
-  text-shadow: 1px 1px 0 #000;
+  color: #c9a33e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bonusBadge {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border: 2px solid #8b4513;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #8b4513;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 3px 0 #654321,
+    inset 0 1px 5px rgba(255, 255, 255, 0.3);
+}
+
+.bonusIcon {
+  font-size: 1rem;
 }
 
 @media (max-width: 1200px) {
   .ranking {
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.8rem;
+    gap: 1rem;
   }
 
   .equipeName {
-    font-size: 0.6rem;
-  }
-
-  .pontosTotal {
-    font-size: 1.2rem;
-  }
-
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.4rem;
-  }
-
-  .statValue {
     font-size: 0.9rem;
+  }
+
+  .scoreValue {
+    font-size: 2rem;
+  }
+
+  .metricNumber {
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
   .title {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 
   .subtitle {
-    font-size: 0.5rem;
+    font-size: 0.7rem;
   }
 
   .ranking {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
-    max-height: calc(100vh - 150px);
+    gap: 1rem;
+    max-height: calc(100vh - 140px);
   }
 
   .card {
@@ -330,30 +407,27 @@
   }
 
   .equipeName {
-    font-size: 0.6rem;
+    font-size: 0.9rem;
   }
 
-  .pontosTotal {
-    font-size: 1rem;
+  .scoreValue {
+    font-size: 2rem;
   }
 
-  .statsGrid {
+  .metricsRow {
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
   }
 
-  .statItem {
-    padding: 0.4rem;
+  .metricBox {
+    padding: 0.5rem;
   }
 
-  .statLabel {
-    font-size: 0.4rem;
+  .metricNumber {
+    font-size: 0.9rem;
   }
 
-  .statValue {
-    font-size: 0.8rem;
-  }
-
-  .statPoints {
+  .metricLabel {
     font-size: 0.4rem;
   }
 }
