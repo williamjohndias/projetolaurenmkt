@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=MedievalSharp&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Poppins:wght@400;600;700&display=swap');
 
 .container {
   min-height: 100vh;
   height: 100vh;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 25%, #1a472a 50%, #0d2818 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   overflow: hidden;
@@ -26,8 +26,20 @@
   right: 0;
   bottom: 0;
   background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 195, 74, 0.05) 2px, rgba(139, 195, 74, 0.05) 4px);
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+    radial-gradient(circle at 60% 50%, rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+    radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.15) 2px, transparent 2px);
+  background-size: 150px 150px, 200px 200px, 180px 180px, 220px 220px;
+  background-position: 0% 0%, 20% 20%, 40% 40%, 60% 60%;
+  animation: snow 25s linear infinite;
   pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes snow {
+  0% { background-position: 0% 0%, 20% 20%, 40% 40%, 60% 60%; }
+  100% { background-position: 0% 100%, 20% 120%, 40% 140%, 60% 160%; }
 }
 
 .header {
@@ -37,28 +49,59 @@
   flex-shrink: 0;
   position: relative;
   z-index: 1;
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.9) 0%, rgba(139, 0, 0, 0.9) 100%);
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 3px solid rgba(255, 215, 0, 0.6);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(220, 20, 60, 0.3);
+}
+
+.header::before {
+  content: '❄️';
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-size: 2rem;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.header::after {
+  content: '❄️';
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 2rem;
+  animation: twinkle 2s ease-in-out infinite 1s;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); }
 }
 
 .title {
-  font-family: 'Cinzel', serif;
-  font-size: 2.5rem;
+  font-family: 'Mountains of Christmas', cursive;
+  font-size: 3rem;
   font-weight: 700;
   margin-bottom: 0.3rem;
   color: #ffd700;
   text-shadow: 
-    4px 4px 0 #8b4513,
-    0 0 10px rgba(255, 215, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.3);
+    4px 4px 0 #8b0000,
+    0 0 20px rgba(255, 215, 0, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.4);
   letter-spacing: 3px;
   text-transform: uppercase;
 }
 
 .subtitle {
-  font-family: 'Cinzel', serif;
-  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
   margin-bottom: 0.5rem;
-  color: #c9a33e;
-  text-shadow: 2px 2px 0 #000;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 600;
 }
 
 .headerActions {
@@ -72,36 +115,31 @@
 .refreshBtn,
 .dashboardBtn {
   padding: 0.6rem 1.2rem;
-  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  background: linear-gradient(135deg, #228B22 0%, #006400 100%);
   border: 3px solid #ffd700;
-  color: #ffd700;
-  font-family: 'Cinzel', serif;
-  font-size: 0.8rem;
-  font-weight: 600;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   text-transform: uppercase;
   box-shadow: 
-    0 4px 0 #654321,
-    0 0 10px rgba(255, 215, 0, 0.3);
-  transition: all 0.2s;
-  position: relative;
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(34, 139, 34, 0.5);
+  transition: all 0.3s;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
 }
 
 .refreshBtn:hover,
 .dashboardBtn:hover {
-  transform: translateY(2px);
+  transform: translateY(-2px);
   box-shadow: 
-    0 2px 0 #654321,
-    0 0 15px rgba(255, 215, 0, 0.5);
-  background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
-}
-
-.refreshBtn:active,
-.dashboardBtn:active {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 #654321;
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(34, 139, 34, 0.7);
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
 }
 
 .loading,
@@ -109,15 +147,16 @@
   text-align: center;
   padding: 3rem;
   color: #ffd700;
-  font-family: 'Cinzel', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .error {
-  background: rgba(139, 0, 0, 0.3);
-  border: 3px solid #ff6b6b;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+  background: rgba(220, 20, 60, 0.3);
+  border: 3px solid #dc143c;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
 }
 
 .errorHeader {
@@ -134,10 +173,12 @@
   background: #8b0000;
   border: 3px solid #ffd700;
   color: #ffd700;
-  font-family: 'Cinzel', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.8rem;
   cursor: pointer;
   text-transform: uppercase;
+  border-radius: 10px;
+  font-weight: 700;
 }
 
 .retryBtn:hover {
@@ -156,28 +197,53 @@
 }
 
 .card {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(201, 163, 62, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 250, 240, 0.95) 100%);
   border: 4px solid #ffd700;
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 1rem;
   position: relative;
   box-shadow: 
     0 8px 16px rgba(0, 0, 0, 0.4),
     inset 0 0 20px rgba(255, 215, 0, 0.1),
-    0 0 30px rgba(255, 215, 0, 0.2);
+    0 0 30px rgba(255, 215, 0, 0.3);
   display: flex;
   flex-direction: column;
   min-height: 0;
   backdrop-filter: blur(5px);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.5),
+    inset 0 0 30px rgba(255, 215, 0, 0.2),
+    0 0 40px rgba(255, 215, 0, 0.5);
+}
+
+.card::before {
+  content: '🎄';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  font-size: 3rem;
+  opacity: 0.4;
+  animation: rotate 10s linear infinite;
+  z-index: 0;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .card.primeiro {
   border-width: 5px;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(201, 163, 62, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 237, 78, 0.15) 100%);
   box-shadow: 
     0 10px 20px rgba(0, 0, 0, 0.5),
-    inset 0 0 30px rgba(255, 215, 0, 0.2),
-    0 0 40px rgba(255, 215, 0, 0.4);
+    inset 0 0 30px rgba(255, 215, 0, 0.3),
+    0 0 50px rgba(255, 215, 0, 0.5);
   animation: shimmer 3s ease-in-out infinite;
 }
 
@@ -185,14 +251,14 @@
   0%, 100% {
     box-shadow: 
       0 10px 20px rgba(0, 0, 0, 0.5),
-      inset 0 0 30px rgba(255, 215, 0, 0.2),
-      0 0 40px rgba(255, 215, 0, 0.4);
+      inset 0 0 30px rgba(255, 215, 0, 0.3),
+      0 0 50px rgba(255, 215, 0, 0.5);
   }
   50% {
     box-shadow: 
       0 10px 20px rgba(0, 0, 0, 0.5),
-      inset 0 0 30px rgba(255, 215, 0, 0.3),
-      0 0 60px rgba(255, 215, 0, 0.6);
+      inset 0 0 30px rgba(255, 215, 0, 0.5),
+      0 0 70px rgba(255, 215, 0, 0.8);
   }
 }
 
@@ -201,6 +267,8 @@
   flex-direction: column;
   height: 100%;
   gap: 0.8rem;
+  position: relative;
+  z-index: 1;
 }
 
 .cardHeader {
@@ -209,54 +277,57 @@
   gap: 0.8rem;
   position: relative;
   padding-bottom: 0.8rem;
-  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+  border-bottom: 3px solid rgba(220, 20, 60, 0.3);
 }
 
 .rankBadge {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
-  border: 3px solid #ffd700;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #8b0000 0%, #dc143c 100%);
+  border: 4px solid #ffd700;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 
     0 4px 0 #654321,
-    inset 0 2px 10px rgba(255, 215, 0, 0.3);
+    inset 0 2px 10px rgba(255, 215, 0, 0.4),
+    0 0 20px rgba(255, 215, 0, 0.5);
   flex-shrink: 0;
 }
 
 .rankNumber {
-  font-family: 'Cinzel', serif;
-  font-size: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
   font-weight: 700;
   color: #ffd700;
-  text-shadow: 2px 2px 0 #000;
+  text-shadow: 
+    2px 2px 0 #000,
+    0 0 10px rgba(255, 215, 0, 0.8);
 }
 
 .crown {
   position: absolute;
-  top: -15px;
+  top: -20px;
   right: 0;
-  font-size: 1.5rem;
+  font-size: 2rem;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
   animation: float 2s ease-in-out infinite;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-8px); }
 }
 
 .equipeName {
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #ffd700;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #8b0000;
   text-shadow: 
-    2px 2px 0 #000,
-    0 0 10px rgba(255, 215, 0, 0.5);
+    2px 2px 0 rgba(255, 215, 0, 0.5),
+    0 0 10px rgba(139, 0, 0, 0.3);
   flex: 1;
   text-align: center;
   text-transform: uppercase;
@@ -265,31 +336,33 @@
 
 .scoreContainer {
   text-align: center;
-  padding: 0.8rem;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid #ffd700;
-  border-radius: 8px;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.15) 100%);
+  border: 3px solid #ffd700;
+  border-radius: 12px;
   box-shadow: 
-    inset 0 2px 10px rgba(0, 0, 0, 0.5),
-    0 0 15px rgba(255, 215, 0, 0.3);
+    inset 0 2px 10px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 215, 0, 0.4);
 }
 
 .scoreLabel {
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  color: #c9a33e;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  color: #8b0000;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 0.3rem;
+  font-weight: 700;
 }
 
 .scoreValue {
-  font-family: 'Cinzel', serif;
-  font-size: 2.5rem;
+  font-family: 'Mountains of Christmas', cursive;
+  font-size: 3rem;
   font-weight: 700;
   text-shadow: 
     3px 3px 0 #000,
-    0 0 20px currentColor;
+    0 0 20px currentColor,
+    0 0 40px rgba(255, 215, 0, 0.5);
   color: #ffd700;
 }
 
@@ -302,19 +375,30 @@
 }
 
 .metricBox {
-  background: rgba(0, 0, 0, 0.4);
-  border: 2px solid rgba(255, 215, 0, 0.4);
-  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(34, 139, 34, 0.15) 0%, rgba(0, 100, 0, 0.15) 100%);
+  border: 2px solid rgba(34, 139, 34, 0.4);
+  border-radius: 8px;
   padding: 0.6rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.3rem;
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 
+    inset 0 2px 5px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(34, 139, 34, 0.2);
+  transition: all 0.3s;
+}
+
+.metricBox:hover {
+  background: linear-gradient(135deg, rgba(34, 139, 34, 0.25) 0%, rgba(0, 100, 0, 0.25) 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 2px 5px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(34, 139, 34, 0.4);
 }
 
 .metricIcon {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
@@ -326,42 +410,50 @@
 }
 
 .metricNumber {
-  font-family: 'Cinzel', serif;
-  font-size: 1.2rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: #ffd700;
-  text-shadow: 2px 2px 0 #000;
+  color: #228B22;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .metricLabel {
-  font-family: 'Cinzel', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.5rem;
-  color: #c9a33e;
+  color: #8b0000;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-weight: 600;
 }
 
 .bonusBadge {
   background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-  border: 2px solid #8b4513;
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
+  border: 3px solid #8b0000;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  font-family: 'Cinzel', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.7rem;
-  font-weight: 600;
-  color: #8b4513;
+  font-weight: 700;
+  color: #8b0000;
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
   box-shadow: 
-    0 3px 0 #654321,
-    inset 0 1px 5px rgba(255, 255, 255, 0.3);
+    0 4px 0 #654321,
+    inset 0 1px 5px rgba(255, 255, 255, 0.4),
+    0 0 15px rgba(255, 215, 0, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .bonusIcon {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 @media (max-width: 1200px) {
@@ -371,15 +463,15 @@
   }
 
   .equipeName {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .scoreValue {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .metricNumber {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -389,7 +481,7 @@
   }
 
   .title {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   .subtitle {
@@ -407,11 +499,11 @@
   }
 
   .equipeName {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .scoreValue {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .metricsRow {
@@ -424,10 +516,10 @@
   }
 
   .metricNumber {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .metricLabel {
-    font-size: 0.4rem;
+    font-size: 0.45rem;
   }
 }
