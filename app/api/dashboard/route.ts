@@ -92,8 +92,8 @@ export async function GET() {
     const temTabelaVendasFechadas = vendasFechadasCheck.rows[0].exists;
     
     const query = `
-      WITH primeiro_registro AS (
-        SELECT DISTINCT ON (id_negocio)
+      WITH registros_por_dia AS (
+        SELECT DISTINCT ON (id_negocio, data::date)
           id_negocio,
           proprietario,
           id_etapa,
@@ -104,7 +104,7 @@ export async function GET() {
           AND id_negocio IS NOT NULL
           AND data::date >= '${dataInicio}'::date
           AND data::date <= '${dataFim}'::date
-        ORDER BY id_negocio, data ASC
+        ORDER BY id_negocio, data::date, data ASC
       ),
       propostas_apresentadas_por_equipe AS (
         SELECT 
@@ -113,8 +113,8 @@ export async function GET() {
             WHEN pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
             WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END as equipe,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Negociações iniciadas' THEN pr.id_negocio END) as propostas_apresentadas
-        FROM primeiro_registro pr
+          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Negociações iniciadas' THEN (pr.id_negocio, pr.data::date) END) as propostas_apresentadas
+        FROM registros_por_dia pr
         WHERE (
           pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
           pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
@@ -134,8 +134,8 @@ export async function GET() {
             WHEN pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
             WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END as equipe,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN pr.id_negocio END) as propostas_adquiridas
-        FROM primeiro_registro pr
+          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN (pr.id_negocio, pr.data::date) END) as propostas_adquiridas
+        FROM registros_por_dia pr
         WHERE (
           pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
           pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
@@ -197,8 +197,8 @@ export async function GET() {
 
     // Query para dados individuais de cada membro
     const queryIndividual = `
-      WITH primeiro_registro AS (
-        SELECT DISTINCT ON (id_negocio)
+      WITH registros_por_dia AS (
+        SELECT DISTINCT ON (id_negocio, data::date)
           id_negocio,
           proprietario,
           id_etapa,
@@ -209,21 +209,21 @@ export async function GET() {
           AND id_negocio IS NOT NULL
           AND data::date >= '${dataInicio}'::date
           AND data::date <= '${dataFim}'::date
-        ORDER BY id_negocio, data ASC
+        ORDER BY id_negocio, data::date, data ASC
       ),
       propostas_apresentadas_por_membro AS (
         SELECT 
           pr.proprietario,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Negociações iniciadas' THEN pr.id_negocio END) as propostas_apresentadas
-        FROM primeiro_registro pr
+          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Negociações iniciadas' THEN (pr.id_negocio, pr.data::date) END) as propostas_apresentadas
+        FROM registros_por_dia pr
         WHERE pr.proprietario IN (${proprietariosList})
         GROUP BY pr.proprietario
       ),
       propostas_adquiridas_por_membro AS (
         SELECT 
           pr.proprietario,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN pr.id_negocio END) as propostas_adquiridas
-        FROM primeiro_registro pr
+          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN (pr.id_negocio, pr.data::date) END) as propostas_adquiridas
+        FROM registros_por_dia pr
         WHERE pr.proprietario IN (${proprietariosList})
         GROUP BY pr.proprietario
       ),

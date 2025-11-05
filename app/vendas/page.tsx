@@ -32,6 +32,9 @@ const PROPRIETARIOS = [
 
 export default function VendasFechadas() {
   const router = useRouter();
+  const [authenticated, setAuthenticated] = useState(false);
+  const [loginForm, setLoginForm] = useState({ usuario: '', senha: '' });
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [vendas, setVendas] = useState<VendaFechada[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +46,47 @@ export default function VendasFechadas() {
   });
   const [showForm, setShowForm] = useState(false);
 
+  useEffect(() => {
+    // Verificar se já está autenticado
+    const isAuth = sessionStorage.getItem('vendas_authenticated') === 'true';
+    setAuthenticated(isAuth);
+    if (isAuth) {
+      fetchVendas();
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        sessionStorage.setItem('vendas_authenticated', 'true');
+        setAuthenticated(true);
+        fetchVendas();
+      } else {
+        setLoginError(data.error || 'Usuário ou senha incorretos');
+      }
+    } catch (err: any) {
+      setLoginError('Erro ao fazer login. Tente novamente.');
+    }
+  };
+
   const fetchVendas = async () => {
     try {
+      setLoading(true);
       const response = await fetch('/api/vendas-fechadas');
       const data = await response.json();
       
@@ -61,9 +103,12 @@ export default function VendasFechadas() {
     }
   };
 
-  useEffect(() => {
-    fetchVendas();
-  }, []);
+  const handleLogout = () => {
+    sessionStorage.removeItem('vendas_authenticated');
+    setAuthenticated(false);
+    setLoginForm({ usuario: '', senha: '' });
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,6 +172,52 @@ export default function VendasFechadas() {
     }
   };
 
+  if (!authenticated) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loginContainer}>
+          <h1 className={styles.title}>Acesso Restrito</h1>
+          <p className={styles.subtitle}>Faça login para gerenciar vendas fechadas</p>
+          <form onSubmit={handleLogin} className={styles.loginForm}>
+            {loginError && (
+              <div className={styles.error}>
+                {loginError}
+              </div>
+            )}
+            <div className={styles.formGroup}>
+              <label htmlFor="usuario">Usuário</label>
+              <input
+                type="text"
+                id="usuario"
+                value={loginForm.usuario}
+                onChange={(e) => setLoginForm({ ...loginForm, usuario: e.target.value })}
+                required
+                placeholder="Digite seu usuário"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="senha">Senha</label>
+              <input
+                type="password"
+                id="senha"
+                value={loginForm.senha}
+                onChange={(e) => setLoginForm({ ...loginForm, senha: e.target.value })}
+                required
+                placeholder="Digite sua senha"
+              />
+            </div>
+            <button type="submit" className={styles.submitBtn}>
+              Entrar
+            </button>
+          </form>
+          <button onClick={() => router.push('/')} className={styles.backBtn}>
+            Voltar ao Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -138,11 +229,16 @@ export default function VendasFechadas() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <button onClick={() => router.push('/')} className={styles.backBtn}>
-          Voltar ao Dashboard
-        </button>
+        <div className={styles.headerActions}>
+          <button onClick={() => router.push('/')} className={styles.backBtn}>
+            Voltar ao Dashboard
+          </button>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            Sair
+          </button>
+        </div>
         <h1 className={styles.title}>Gerenciar Vendas Fechadas</h1>
-        <p className={styles.subtitle}>Marque manualmente as vendas que foram fechadas</p>
+        <p className={styles.subtitle}>Marque manualmente as vendas que foram fechadas (+5 pontos cada)</p>
       </header>
 
       {error && (
