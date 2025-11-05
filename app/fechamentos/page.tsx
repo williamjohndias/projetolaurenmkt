@@ -85,7 +85,7 @@ export default function Fechamentos() {
           numero: formData.numero,
           proprietario: formData.proprietario,
           valor: formData.valor ? parseFloat(formData.valor) : null,
-          data_fechamento: formData.data_fechamento || null
+          data_fechamento: formData.data_fechamento && formData.data_fechamento.trim() !== '' ? formData.data_fechamento : null
         }),
       });
 
@@ -249,7 +249,27 @@ export default function Fechamentos() {
                       : '-'
                     }
                   </td>
-                  <td>{fechamento.data_fechamento ? new Date(fechamento.data_fechamento + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</td>
+                  <td>
+                    {(() => {
+                      if (!fechamento.data_fechamento) return '-';
+                      try {
+                        const dateStr = String(fechamento.data_fechamento);
+                        // Se já vem como string no formato YYYY-MM-DD, usar diretamente
+                        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                          const [ano, mes, dia] = dateStr.split('-');
+                          return `${dia}/${mes}/${ano}`;
+                        }
+                        // Se for um objeto Date ou outra string, tentar converter
+                        const date = new Date(dateStr + 'T12:00:00');
+                        if (isNaN(date.getTime())) {
+                          return '-';
+                        }
+                        return date.toLocaleDateString('pt-BR');
+                      } catch {
+                        return '-';
+                      }
+                    })()}
+                  </td>
                   <td>
                     <button
                       onClick={() => handleDelete(fechamento.id)}
