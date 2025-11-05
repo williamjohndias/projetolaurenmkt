@@ -125,7 +125,7 @@ export default function PontosPage() {
                     <span className={styles.rankNumber}>{index + 1}</span>
                   </div>
                   {isPrimeiro && <div className={styles.crown}>👑</div>}
-                  <h2 className={styles.equipeName}>{nomeDisplay}</h2>
+                  <h2 className={styles.equipeName} style={{ color: corEquipe }}>{nomeDisplay}</h2>
                 </div>
                 
                 <div className={styles.scoreContainer}>
