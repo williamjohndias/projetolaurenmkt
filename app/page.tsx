@@ -109,9 +109,6 @@ export default function Home() {
                  <a href="/vendas" className={styles.vendasBtn}>
                    Gerenciar Vendas Fechadas
                  </a>
-                 <a href="/fechamentos" className={styles.vendasBtn}>
-                   Gerenciar Fechamentos
-                 </a>
                </div>
       </header>
 
