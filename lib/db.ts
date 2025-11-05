@@ -1,11 +1,11 @@
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  host: 'bdunicoprecs.c50cwuocuwro.sa-east-1.rds.amazonaws.com',
-  port: 5432,
-  database: 'dashmetas',
-  user: 'postgres',
-  password: '$P^iFe27^YP5cpBU3J&tqa',
+  host: process.env.DB_HOST || 'bdunicoprecs.c50cwuocuwro.sa-east-1.rds.amazonaws.com',
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+  database: process.env.DB_NAME || 'dashmetas',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '$P^iFe27^YP5cpBU3J&tqa',
   ssl: {
     rejectUnauthorized: false
   },
