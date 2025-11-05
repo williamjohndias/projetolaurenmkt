@@ -24,8 +24,29 @@ export async function GET() {
   try {
     client = await pool.connect();
     await ensureFechamentosTable(client);
-    const result = await client.query('SELECT id, numero, proprietario, valor, data_fechamento FROM fechamentos ORDER BY data_fechamento DESC');
-    return NextResponse.json({ fechamentos: result.rows });
+    const result = await client.query('SELECT id, numero, proprietario, valor, data_fechamento::text as data_fechamento FROM fechamentos ORDER BY data_fechamento DESC');
+    
+    // Garantir que data_fechamento seja sempre uma string no formato YYYY-MM-DD
+    const fechamentos = result.rows.map((row: any) => {
+      if (row.data_fechamento) {
+        // Se for um objeto Date, converter para string YYYY-MM-DD
+        if (row.data_fechamento instanceof Date) {
+          const year = row.data_fechamento.getFullYear();
+          const month = String(row.data_fechamento.getMonth() + 1).padStart(2, '0');
+          const day = String(row.data_fechamento.getDate()).padStart(2, '0');
+          row.data_fechamento = `${year}-${month}-${day}`;
+        } else if (typeof row.data_fechamento === 'string') {
+          // Se já for string, garantir formato YYYY-MM-DD
+          const dateMatch = row.data_fechamento.match(/^(\d{4}-\d{2}-\d{2})/);
+          if (dateMatch) {
+            row.data_fechamento = dateMatch[1];
+          }
+        }
+      }
+      return row;
+    });
+    
+    return NextResponse.json({ fechamentos });
   } catch (error: any) {
     console.error('Erro ao buscar fechamentos:', error);
     return NextResponse.json({ error: 'Erro ao buscar fechamentos', details: error.message }, { status: 500 });

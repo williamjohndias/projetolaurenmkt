@@ -252,20 +252,48 @@ export default function Fechamentos() {
                   <td>
                     {(() => {
                       if (!fechamento.data_fechamento) return '-';
+                      
                       try {
-                        const dateStr = String(fechamento.data_fechamento);
+                        const dateStr = String(fechamento.data_fechamento).trim();
+                        
+                        // Se a string estiver vazia ou for "Invalid Date", retornar '-'
+                        if (!dateStr || dateStr === 'Invalid Date' || dateStr === 'null' || dateStr === 'undefined') {
+                          return '-';
+                        }
+                        
                         // Se já vem como string no formato YYYY-MM-DD, usar diretamente
                         if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
                           const [ano, mes, dia] = dateStr.split('-');
                           return `${dia}/${mes}/${ano}`;
                         }
-                        // Se for um objeto Date ou outra string, tentar converter
-                        const date = new Date(dateStr + 'T12:00:00');
-                        if (isNaN(date.getTime())) {
+                        
+                        // Tentar parsear como Date se for um timestamp ou outro formato
+                        let date: Date;
+                        
+                        // Se for um timestamp (número)
+                        if (!isNaN(Number(dateStr)) && dateStr.length === 13) {
+                          date = new Date(Number(dateStr));
+                        } else if (dateStr.includes('T')) {
+                          // Se já tem formato ISO
+                          date = new Date(dateStr);
+                        } else {
+                          // Tentar adicionar hora para evitar problemas de timezone
+                          date = new Date(dateStr + 'T12:00:00');
+                        }
+                        
+                        // Verificar se a data é válida
+                        if (isNaN(date.getTime()) || date.toString() === 'Invalid Date') {
+                          console.warn('Data inválida recebida:', dateStr);
                           return '-';
                         }
-                        return date.toLocaleDateString('pt-BR');
-                      } catch {
+                        
+                        return date.toLocaleDateString('pt-BR', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        });
+                      } catch (error) {
+                        console.error('Erro ao formatar data:', error, 'Valor:', fechamento.data_fechamento);
                         return '-';
                       }
                     })()}
