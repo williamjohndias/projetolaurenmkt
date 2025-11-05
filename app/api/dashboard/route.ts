@@ -113,8 +113,9 @@ export async function GET() {
             WHEN pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
             WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END as equipe,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Negociações iniciadas' THEN (pr.id_negocio, pr.data::date) END) as propostas_apresentadas
+          COUNT(*) as propostas_apresentadas
         FROM registros_por_dia pr
+        WHERE pr.id_etapa = 'Negociações iniciadas'
         WHERE (
           pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
           pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
@@ -134,8 +135,9 @@ export async function GET() {
             WHEN pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') THEN 'Caroline Dandara'
             WHEN pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka') THEN 'Caio'
           END as equipe,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN (pr.id_negocio, pr.data::date) END) as propostas_adquiridas
+          COUNT(*) as propostas_adquiridas
         FROM registros_por_dia pr
+        WHERE pr.id_etapa = 'Cálculo'
         WHERE (
           pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
           pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
@@ -214,17 +216,19 @@ export async function GET() {
       propostas_apresentadas_por_membro AS (
         SELECT 
           pr.proprietario,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Negociações iniciadas' THEN (pr.id_negocio, pr.data::date) END) as propostas_apresentadas
+          COUNT(*) as propostas_apresentadas
         FROM registros_por_dia pr
         WHERE pr.proprietario IN (${proprietariosList})
+          AND pr.id_etapa = 'Negociações iniciadas'
         GROUP BY pr.proprietario
       ),
       propostas_adquiridas_por_membro AS (
         SELECT 
           pr.proprietario,
-          COUNT(DISTINCT CASE WHEN pr.id_etapa = 'Cálculo' THEN (pr.id_negocio, pr.data::date) END) as propostas_adquiridas
+          COUNT(*) as propostas_adquiridas
         FROM registros_por_dia pr
         WHERE pr.proprietario IN (${proprietariosList})
+          AND pr.id_etapa = 'Cálculo'
         GROUP BY pr.proprietario
       ),
       vendas_fechadas_por_membro AS (
