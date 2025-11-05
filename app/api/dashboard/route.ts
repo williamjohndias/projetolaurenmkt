@@ -116,11 +116,11 @@ export async function GET() {
           COUNT(*) as propostas_apresentadas
         FROM registros_por_dia pr
         WHERE pr.id_etapa = 'Negociações iniciadas'
-        WHERE (
-          pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
-          pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
-          pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka')
-        )
+          AND (
+            pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
+            pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
+            pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka')
+          )
         GROUP BY 
           CASE 
             WHEN pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') THEN 'Ana Carolina'
@@ -138,11 +138,11 @@ export async function GET() {
           COUNT(*) as propostas_adquiridas
         FROM registros_por_dia pr
         WHERE pr.id_etapa = 'Cálculo'
-        WHERE (
-          pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
-          pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
-          pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka')
-        )
+          AND (
+            pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') OR
+            pr.proprietario IN ('Caroline Dandara', 'Davi', 'Alex Henrique', 'Assib Zattar Neto') OR
+            pr.proprietario IN ('Caio', 'Kauany', 'Daniely', 'Byanka')
+          )
         GROUP BY 
           CASE 
             WHEN pr.proprietario IN ('Ana Carolina', 'Ana Campos', 'Ana Regnier', 'Agatha Oliveira', 'Bruno') THEN 'Ana Carolina'
