@@ -67,9 +67,9 @@ export async function GET() {
     // Buscar dados agregados por equipe (agregando todos os membros)
     console.log('Buscando dados da tabela dashmetas...');
     
-    // Período da campanha: 05/11 a 20/12 (período fixo)
+    // Período da campanha: 06/11 a 20/12 (período fixo)
     const anoAtual = new Date().getFullYear();
-    const dataInicio = `${anoAtual}-11-05`; // 05 de novembro
+    const dataInicio = `${anoAtual}-11-06`; // 06 de novembro
     const dataFim = `${anoAtual}-12-20`;   // 20 de dezembro
     
     console.log(`Filtrando dados do período da campanha: ${dataInicio} até ${dataFim}`);

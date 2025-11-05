@@ -97,7 +97,7 @@ export default function Home() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.title}>🎄 Rumo ao Natal Campeão 🎄</h1>
-               <p className={styles.subtitle}>Campanha de Vendas • 05/11 a 20/12</p>
+               <p className={styles.subtitle}>Campanha de Vendas • 06/11 a 20/12</p>
                <div className={styles.headerActions}>
                  <button onClick={fetchData} className={styles.refreshBtn}>
                    Atualizar
@@ -335,7 +335,7 @@ export default function Home() {
           </div>
           <div className={styles.footerSection}>
                    <h3>Período</h3>
-                   <p>05 de Novembro a 20 de Dezembro</p>
+                   <p>06 de Novembro a 20 de Dezembro</p>
             <p className={styles.footerCopyright}>
               © 2025 Rumo ao Natal Campeão
             </p>
